@@ -1,0 +1,9 @@
+# Binaries
+obj/*
+bin/*
+
+# Keep everything with a gitkeep file
+!*.gitkeep
+
+# Enviroment variables
+.env

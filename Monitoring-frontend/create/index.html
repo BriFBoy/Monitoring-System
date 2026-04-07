@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title></title>
+    <link href="/global/default.css" rel="stylesheet" />
+    <link href="/create/create.css" rel="stylesheet" />
+  </head>
+  <body>
+    <nav class="sidenav">
+      <div class="titleLayout">
+        <a href="/"><h2>Monitoring</h2></a>
+      </div>
+      <div id="options">
+        <a href="/create">+</a>
+      </div>
+      <div class="iplist" id="iplist"></div>
+    </nav>
+
+    <div id="form">
+      <h1>Create New Entry</h1>
+      <form>
+        <label for="ip">Enter IP</label>
+        <input type="text" name="ip" id="ip" />
+        <label for="port">Enter Port</label>
+        <input type="text" name="port" id="port" />
+      </form>
+      <button type="click" id="create">create</button>
+    </div>
+    <script src="/create/create.js"></script>
+    <script src="/global/nav.js"></script>
+  </body>
+</html>

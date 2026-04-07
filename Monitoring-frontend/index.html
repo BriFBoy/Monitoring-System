@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/index.css" />
+    <link rel="stylesheet" href="/global/default.css" />
+    <script src="/global/default.js"></script>
+    <title></title>
+  </head>
+  <body>
+    <nav class="sidenav">
+      <div class="titleLayout">
+        <h2>Monitoring</h2>
+      </div>
+      <div id="options">
+        <a href="/create">+</a>
+      </div>
+      <div class="iplist" id="iplist"></div>
+    </nav>
+
+    <div id="monitor">
+      <div class="box">
+        <h1>Placeholder text</h1>
+      </div>
+      <div class="cpu">
+        <canvas id="cpu"></canvas>
+      </div>
+      <div class="mem">
+        <canvas id="mem"></canvas>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0"></script>
+    <script src="/system.js"></script>
+    <script src="/global/nav.js"></script>
+  </body>
+</html>

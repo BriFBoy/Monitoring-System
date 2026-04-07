@@ -1,0 +1,51 @@
+* {
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: grid;
+  grid-template-columns: 15vw 1fr;
+  height: 100vh;
+}
+
+.sidenav {
+  text-decoration: none;
+  text-align: center;
+  background-color: blue;
+}
+
+.iplist a {
+  margin: 5%;
+  padding: 3px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 1.5em;
+  background-color: grey;
+  display: block;
+}
+
+.titleLayout {
+  min-height: 10%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.titleLayout>a {
+  text-decoration: none;
+}
+
+#options {
+  text-decoration: none;
+  background-color: grey;
+  font-size: 32px;
+  display: flex;
+  justify-content: space-between;
+  padding-left: 5%;
+  padding-right: 5%;
+}
+
+#options>a {
+  text-decoration: none;
+}

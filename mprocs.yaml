@@ -1,0 +1,10 @@
+procs:
+  frontend:
+    cmd: ["miniweb"]
+    cwd: "./Monitoring-frontend/"
+  backend:
+    cmd: ["cargo", "run"]
+    cwd: "./Monitoring-backend"
+  agent:
+      cmd: ["./Monitoring-agent/bin/monitoring-agent"]
+

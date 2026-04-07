@@ -1,0 +1,23 @@
+#monitor {
+  display: grid;
+  grid-template-rows: repeat(2, 1fr);
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  padding: 10px;
+  box-sizing: border-box;
+  height: 100vh;
+}
+
+.cpu,
+.mem {
+  background-color: grey;
+}
+
+.mem {
+  grid-column: span 2;
+}
+
+.box {
+  background-color: orange;
+  border: 1px solid #444;
+}
