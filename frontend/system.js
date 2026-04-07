@@ -30,7 +30,7 @@ async function fetchData() {
       cpu_usage: json.cpu_usage,
     };
   } catch (err) {
-    console.error("Error fetching memory data:", err);
+    console.error("Error fetching data:", err);
     return null;
   }
 }
