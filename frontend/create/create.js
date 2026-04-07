@@ -14,12 +14,12 @@ const IPARRAY_NAME = "IPS";
 CREATEBUTTON.addEventListener("click", async () => {
   const IP = {
     ip: IPELEMENT.value,
-    port: PORTELEMENT.value,
+    port: Number(PORTELEMENT.value),
   };
 
   if (!localStorage.getItem(IPARRAY_NAME)) {
     let res = await fetch(localStorage.getItem("BACKEND") + "/api/getips");
-    let IPS = (await res.json()).ips;
+    let IPS = await res.json();
 
     console.log(IPS);
     IPS.push(IP);
