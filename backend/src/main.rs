@@ -84,7 +84,7 @@ async fn ping(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder 
     let ip = body.0;
 
     udp_socket
-        .send_to("type=smetric;".as_bytes(), format!("{}:{}", ip.ip, ip.port))
+        .send_to("type=info;".as_bytes(), format!("{}:{}", ip.ip, ip.port))
         .expect("faild to send");
 
     let mut buf = [0; 200];
