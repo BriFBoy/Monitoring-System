@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -62,6 +63,11 @@ int main(int argc, char *argv[]) {
 
     struct MetricRequest *metric = parsMetricRequest(buff, bytes_rec);
     printMetricRequest(metric);
+    char response[256];
+    snprintf(response, sizeof(response), "mem=%d;disk=%d;cpu=%d;", 10000, 900,
+             50);
+    sendto(socket_fd, response, strlen(response), 0,
+           (struct sockaddr *)&pear_addr, sizeof(pear_addr));
   }
 
   free(buff);

@@ -1,4 +1,4 @@
-use std::sync::Mutex;
+use std::{net::UdpSocket, sync::Mutex, time::Duration};
 
 use actix_cors::Cors;
 use actix_web::{
@@ -8,18 +8,22 @@ use actix_web::{
     web::{self, Json},
 };
 use monitoring_backend_rs::{IpAddr, SystemInfo, SystemMectrics};
-use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize)]
 struct IpStorage {
     storage: Mutex<Vec<IpAddr>>,
+    udp_sock: Mutex<UdpSocket>,
 }
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let port: u16 = 8081;
+    let udp_socket = UdpSocket::bind("127.0.0.1:9090").unwrap();
+    udp_socket
+        .set_read_timeout(Some(Duration::from_secs(2)))
+        .unwrap();
     let storage = web::Data::new(IpStorage {
         storage: Mutex::new(Vec::new()),
+        udp_sock: Mutex::new(udp_socket),
     });
 
     println!("Starting server on port {port}");
@@ -37,6 +41,7 @@ async fn main() -> std::io::Result<()> {
             .service(sysmetric)
             .service(getips)
             .service(addip)
+            .service(ping)
     })
     .workers(5)
     .bind(("127.0.0.1", port))?
@@ -71,4 +76,20 @@ async fn addip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder
     let mut storage = data.storage.lock().unwrap();
     storage.push(body.0);
     HttpResponse::Ok().status(StatusCode::OK).body("Added Ip")
+}
+
+#[get("/api/ping")]
+async fn ping(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder {
+    let udp_socket = data.udp_sock.lock().unwrap();
+    let ip = body.0;
+
+    udp_socket
+        .send_to("type=smetric;".as_bytes(), format!("{}:{}", ip.ip, ip.port))
+        .expect("faild to send");
+
+    let mut buf = [0; 200];
+    let (amount, _) = udp_socket.recv_from(&mut buf).unwrap();
+    let str = String::from_utf8_lossy(&buf[..amount]);
+    let res = SystemMectrics::from_agent_response(&str);
+    serde_json::to_string(&res)
 }

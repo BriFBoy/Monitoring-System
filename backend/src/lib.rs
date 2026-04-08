@@ -4,8 +4,8 @@ pub mod agent;
 
 #[derive(Deserialize, Serialize)]
 pub struct IpAddr {
-    ip: String,
-    port: u16,
+    pub ip: String,
+    pub port: u16,
 }
 
 impl IpAddr {
