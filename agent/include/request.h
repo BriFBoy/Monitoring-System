@@ -1,7 +1,7 @@
 #ifndef REQUEST
 #define REQUEST
 
-enum Type { TYPE_INVALID, INFO };
+enum Type { TYPE_INVALID, INFO, METRIC };
 enum Amount { AMOUNT_INVALID, STOPPED, ONCE };
 
 struct MetricRequest {
