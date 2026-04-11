@@ -1,10 +1,12 @@
 #include "../include/parser.h"
 #include "../include/request.h"
+#include "../include/system.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <unistd.h>
 
@@ -62,6 +64,27 @@ int main(int argc, char *argv[]) {
 
     struct MetricRequest *metric = parsMetricRequest(buff, bytes_rec);
     printMetricRequest(metric);
+
+    char response[256];
+    if (metric->type == INFO) {
+      struct SystemInfo *info = getSystemInfo();
+
+      snprintf(response, sizeof(response), "mem=%lu;disk=%lu;", info->mem_total,
+               info->disk_total);
+      response[255] = '\0';
+
+      sendto(socket_fd, response, strlen(response), 0,
+             (struct sockaddr *)&pear_addr, sizeof(pear_addr));
+    } else if (metric->type == METRIC) {
+      struct SystemMetric *metric = getSystemMetric();
+
+      snprintf(response, sizeof(response), "mem=%lu;disk=%lu;cpu=%d;",
+               metric->mem_used, metric->disk_used, metric->cpu);
+      response[255] = '\0';
+
+      sendto(socket_fd, response, strlen(response), 0,
+             (struct sockaddr *)&pear_addr, sizeof(pear_addr));
+    }
   }
 
   free(buff);

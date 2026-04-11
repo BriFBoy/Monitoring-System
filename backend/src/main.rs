@@ -7,13 +7,10 @@ use actix_web::{
     post,
     web::{self, Json},
 };
-use monitoring_backend_rs::{IpAddr, SystemInfo, SystemMectrics};
-use serde::{Deserialize, Serialize};
-
-#[derive(Serialize, Deserialize)]
-struct IpStorage {
-    storage: Mutex<Vec<IpAddr>>,
-}
+use monitoring_backend_rs::{
+    IpAddr, IpStorage, SystemMectrics,
+    agent::{get_sys_info, get_sys_metric},
+};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -37,6 +34,7 @@ async fn main() -> std::io::Result<()> {
             .service(sysmetric)
             .service(getips)
             .service(addip)
+            .service(ping)
     })
     .workers(5)
     .bind(("127.0.0.1", port))?
@@ -50,14 +48,15 @@ async fn root() -> impl Responder {
 }
 
 #[get("/api/sysinfo")]
-async fn sysinfo() -> impl Responder {
-    let sysinfo = SystemInfo::new(78232428274, 2622927572859234);
-    serde_json::to_string(&sysinfo)
+async fn sysinfo(query: web::Query<IpAddr>) -> impl Responder {
+    let info = get_sys_info(query.0);
+    serde_json::to_string(&info)
 }
+
 #[get("/api/sysmetric")]
-async fn sysmetric() -> impl Responder {
-    let sysmetric: SystemMectrics = SystemMectrics::new(58232428274, 2622927572859234, 50);
-    serde_json::to_string(&sysmetric)
+async fn sysmetric(query: web::Query<IpAddr>) -> impl Responder {
+    let metric = get_sys_metric(query.0);
+    serde_json::to_string(&metric)
 }
 
 #[get("/api/getips")]
@@ -71,4 +70,10 @@ async fn addip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder
     let mut storage = data.storage.lock().unwrap();
     storage.push(body.0);
     HttpResponse::Ok().status(StatusCode::OK).body("Added Ip")
+}
+
+#[get("/api/ping")]
+async fn ping(body: Json<IpAddr>) -> Json<SystemMectrics> {
+    let string = get_sys_metric(body.0);
+    Json(string)
 }

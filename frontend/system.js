@@ -1,7 +1,27 @@
 let sysmetric_global;
 let sysinfo_global;
+let ip;
+let initialized = false;
 async function fetchInfo() {
-  let json = await fetch(localStorage.getItem("BACKEND") + "/api/sysinfo")
+  let params = new URLSearchParams(window.location.search);
+  ip = {
+    ip: params.get("ip"),
+    port: params.get("port"),
+  };
+  if (ip.port === null || ip.ip === null) {
+    console.log("Waiting for ip and port in URL...");
+    setTimeout(fetchInfo, 500);
+    return;
+  }
+  console.log("Got ip:", ip.ip, "port:", ip.port);
+  let json = await fetch(
+    localStorage.getItem("BACKEND") +
+      "/api/sysinfo" +
+      "?ip=" +
+      ip.ip +
+      "&port=" +
+      ip.port,
+  )
     .then((res) => res.json())
     .then((json) => json);
   sysinfo_global = {
@@ -11,16 +31,31 @@ async function fetchInfo() {
   const sysmetric = await fetchData();
   sysmetric_global = sysmetric;
   console.debug(sysinfo_global);
+
+  if (!initialized) {
+    initialized = true;
+    cpu();
+    mem();
+  }
 }
 // Updates the global variable to the new information
 setInterval(async () => {
+  if (!ip || !ip.ip || !ip.port) return;
   const sysmetric = await fetchData();
   if (sysmetric === null) return;
   sysmetric_global = sysmetric;
 }, 2000);
 async function fetchData() {
+  if (!ip || !ip.ip || !ip.port) return null;
   try {
-    const json = await fetch(localStorage.getItem("BACKEND") + "/api/sysmetric")
+    const json = await fetch(
+      localStorage.getItem("BACKEND") +
+        "/api/sysmetric" +
+        "?ip=" +
+        ip.ip +
+        "&port=" +
+        ip.port,
+    )
       .then((res) => res.json())
       .then((json) => json);
 
@@ -38,7 +73,7 @@ async function fetchData() {
 async function mem() {
   const ctx = document.getElementById("mem");
   console.debug(sysinfo_global);
-  let totalMemGB = sysinfo_global.mem_total / 1024 / 1024 / 1024;
+  let totalMemGB = sysinfo_global.mem_total / 1024 / 1024;
   console.debug(totalMemGB);
 
   const memChart = new Chart(ctx, {
@@ -87,7 +122,10 @@ async function mem() {
 
   // Update chart every second
   setInterval(() => {
-    let usedGB = sysmetric_global.mem_used / 1024 / 1024 / 1024;
+    if (!sysmetric_global) return;
+    let usedGB =
+      sysinfo_global.mem_total / 1024 / 1024 -
+      sysmetric_global.mem_used / 1024 / 1024;
     if (usedGB === null) return;
 
     const timestamp = new Date().toLocaleTimeString();
@@ -146,6 +184,7 @@ async function cpu() {
 
   // Updates the cpu chart every 2 seconds
   setInterval(async () => {
+    if (!sysmetric_global) return;
     const cpuload = sysmetric_global.cpu_usage;
     if (cpuload === null) return;
 
@@ -163,8 +202,6 @@ async function cpu() {
 }
 
 async function init() {
-  await fetchInfo();
-  cpu();
-  mem();
+  fetchInfo();
 }
 init();

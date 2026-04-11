@@ -8,6 +8,8 @@ static void cmpKeys(const char *key, const char *value,
   if (strcmp(key, "type") == 0) {
     if (strcmp(value, "info") == 0) {
       metricrequest->type = INFO;
+    } else if (strcmp(value, "metric") == 0) {
+      metricrequest->type = METRIC;
     }
   } else if (strcmp(key, "amount") == 0) {
     if (strcmp(value, "stopped") == 0) {

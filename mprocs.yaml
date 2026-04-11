@@ -1,10 +1,10 @@
 procs:
   frontend:
     cmd: ["miniweb"]
-    cwd: "/home/brian/Projects/Monitoring-System/frontend/"
+    cwd: "./frontend"
   backend:
     cmd: ["cargo", "run"]
-    cwd: "/home/brian/Projects/Monitoring-System/backend"
+    cwd: "./backend"
   agent:
-      cmd: ["./agent/bin/monitoring-agent"]
+    cmd: ["./agent/bin/monitoring-agent"]
 

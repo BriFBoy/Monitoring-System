@@ -42,12 +42,12 @@ CREATEBUTTON.addEventListener("click", async () => {
       ip: IP.ip,
       port: IP.port,
     }),
-  }).then(() => addIpToNav(IP.ip));
+  }).then(() => addIpToNav(IP));
 });
 
 function addIpToNav(ip) {
   let el = document.createElement("a");
-  el.innerHTML = ip;
-  el.href = ip;
+  el.innerHTML = ip.ip + ":" + ip.port;
+  el.href = "/?ip" + ip.ip + "&port=" + ip.port;
   IPLIST1.appendChild(el);
 }
