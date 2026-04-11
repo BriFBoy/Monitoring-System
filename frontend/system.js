@@ -1,5 +1,6 @@
 let sysmetric_global;
 let sysinfo_global;
+let ip;
 async function fetchInfo() {
   let json = await fetch(localStorage.getItem("BACKEND") + "/api/sysinfo")
     .then((res) => res.json())

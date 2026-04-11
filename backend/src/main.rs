@@ -1,4 +1,4 @@
-use std::{net::UdpSocket, sync::Mutex, time::Duration};
+use std::sync::Mutex;
 
 use actix_cors::Cors;
 use actix_web::{
@@ -7,23 +7,16 @@ use actix_web::{
     post,
     web::{self, Json},
 };
-use monitoring_backend_rs::{IpAddr, SystemInfo, SystemMectrics};
-
-struct IpStorage {
-    storage: Mutex<Vec<IpAddr>>,
-    udp_sock: Mutex<UdpSocket>,
-}
+use monitoring_backend_rs::{
+    IpAddr, IpStorage, SystemMectrics,
+    agent::{get_sys_info, get_sys_metric},
+};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let port: u16 = 8081;
-    let udp_socket = UdpSocket::bind("127.0.0.1:9090").unwrap();
-    udp_socket
-        .set_read_timeout(Some(Duration::from_secs(2)))
-        .unwrap();
     let storage = web::Data::new(IpStorage {
         storage: Mutex::new(Vec::new()),
-        udp_sock: Mutex::new(udp_socket),
     });
 
     println!("Starting server on port {port}");
@@ -55,14 +48,15 @@ async fn root() -> impl Responder {
 }
 
 #[get("/api/sysinfo")]
-async fn sysinfo() -> impl Responder {
-    let sysinfo = SystemInfo::new(78232428274, 2622927572859234);
-    serde_json::to_string(&sysinfo)
+async fn sysinfo(query: web::Query<IpAddr>) -> impl Responder {
+    let info = get_sys_info(query.0);
+    serde_json::to_string(&info)
 }
+
 #[get("/api/sysmetric")]
-async fn sysmetric() -> impl Responder {
-    let sysmetric: SystemMectrics = SystemMectrics::new(58232428274, 2622927572859234, 50);
-    serde_json::to_string(&sysmetric)
+async fn sysmetric(query: web::Query<IpAddr>) -> impl Responder {
+    let metric = get_sys_metric(query.0);
+    serde_json::to_string(&metric)
 }
 
 #[get("/api/getips")]
@@ -79,17 +73,7 @@ async fn addip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder
 }
 
 #[get("/api/ping")]
-async fn ping(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder {
-    let udp_socket = data.udp_sock.lock().unwrap();
-    let ip = body.0;
-
-    udp_socket
-        .send_to("type=info;".as_bytes(), format!("{}:{}", ip.ip, ip.port))
-        .expect("faild to send");
-
-    let mut buf = [0; 200];
-    let (amount, _) = udp_socket.recv_from(&mut buf).unwrap();
-    let str = String::from_utf8_lossy(&buf[..amount]);
-    let res = SystemMectrics::from_agent_response(&str);
-    serde_json::to_string(&res)
+async fn ping(body: Json<IpAddr>) -> Json<SystemMectrics> {
+    let string = get_sys_metric(body.0);
+    Json(string)
 }
