@@ -1,4 +1,5 @@
 #include "../include/system.h"
+#include "../include/mem.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/statvfs.h>
@@ -6,17 +7,15 @@
 
 /// Returns Null if error ocurrs
 struct SystemInfo *getSystemInfo() {
-  struct sysinfo mem_info;
   struct statvfs disk_info;
   statvfs("/", &disk_info);
-  sysinfo(&mem_info);
 
   struct SystemInfo *info = malloc(sizeof(struct SystemInfo));
   if (!info) {
     perror("Failed to malloc memory");
     return NULL;
   }
-  info->mem_total = mem_info.totalram * mem_info.mem_unit;
+  info->mem_total = get_mem_total();
   info->disk_total = disk_info.f_blocks * disk_info.f_bsize;
   return info;
 }
@@ -33,7 +32,7 @@ struct SystemMetric *getSystemMetric() {
     perror("Failed to malloc memory");
     return NULL;
   }
-  info->mem_used = mem_info.freeram * mem_info.mem_unit;
-  info->disk_used = disk_info.f_bfree * disk_info.f_bsize;
+  info->mem_used = getMemAvailable();
+  info->disk_used = disk_info.f_bavail * disk_info.f_bsize;
   return info;
 }

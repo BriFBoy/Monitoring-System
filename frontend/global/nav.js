@@ -6,7 +6,9 @@ let IPS = fetch(localStorage.getItem("BACKEND") + "/api/getips")
     IPS.forEach((item) => {
       let el = document.createElement("a");
       el.innerHTML = item.ip + ":" + item.port;
-      el.href = item.ip;
+      el.href = "/?ip=" + item.ip + "&port=" + item.port;
       IPLIST.appendChild(el);
     });
   });
+
+function setparams() {}
