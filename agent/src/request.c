@@ -14,7 +14,11 @@ void printMetricRequest(const struct MetricRequest *request) {
     break;
   case TYPE_INVALID:
     break;
+  case METRIC:
+    printf("\tType: Metric");
+    break;
   }
+
   switch (request->amount) {
   case STOPPED:
     printf("\tAmount: STOPPED\n");

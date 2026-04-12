@@ -1,8 +1,10 @@
+#include "../include/cpu.h"
 #include "../include/parser.h"
 #include "../include/request.h"
 #include "../include/system.h"
 #include <arpa/inet.h>
 #include <netinet/in.h>
+#include <pthread.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -24,6 +26,22 @@ void printPacket(const int bytes_rec, const char *buff,
   printf("\n");
   fflush(stdout);
 }
+void *threadfunc(void *arg) {
+
+  while (true) {
+    float usage = calcCpuUsage();
+    setCpuUsage(usage);
+    sleep(1);
+  }
+
+  return NULL;
+}
+pthread_t createMetricThread() {
+  pthread_t thread;
+
+  pthread_create(&thread, NULL, threadfunc, NULL);
+  return thread;
+}
 
 int main(int argc, char *argv[]) {
 
@@ -43,6 +61,7 @@ int main(int argc, char *argv[]) {
     perror("Error Binding socket\n");
     return EXIT_FAILURE;
   }
+  pthread_t thread = createMetricThread();
 
   socklen_t pear_len = sizeof(pear_addr);
   while (true) {
