@@ -1,5 +1,8 @@
-let sysmetric_global;
-let sysinfo_global;
+import mem from "/mem.js";
+import cpu from "/cpu.js";
+
+export let sysmetric_global;
+export let sysinfo_global;
 let ip;
 let initialized = false;
 async function fetchInfo() {
@@ -31,6 +34,7 @@ async function fetchInfo() {
   const sysmetric = await fetchData();
   sysmetric_global = sysmetric;
   console.debug(sysinfo_global);
+  updateStats();
 
   if (!initialized) {
     initialized = true;
@@ -44,6 +48,7 @@ setInterval(async () => {
   const sysmetric = await fetchData();
   if (sysmetric === null) return;
   sysmetric_global = sysmetric;
+  updateStats();
 }, 2000);
 async function fetchData() {
   if (!ip || !ip.ip || !ip.port) return null;
@@ -60,7 +65,7 @@ async function fetchData() {
       .then((json) => json);
 
     return {
-      mem_used: json.mem_used,
+      mem_free: json.mem_used,
       disk_used: json.disk_used,
       cpu_usage: json.cpu_usage,
     };
@@ -70,138 +75,27 @@ async function fetchData() {
   }
 }
 
-async function mem() {
-  const ctx = document.getElementById("mem");
-  console.debug(sysinfo_global);
-  let totalMemGB = sysinfo_global.mem_total / 1024 / 1024;
-  console.debug(totalMemGB);
-
-  const memChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: Array(10).fill(""),
-      datasets: [
-        {
-          label: "Memory Used",
-          data: Array(10).fill(0),
-          backgroundColor: "rgb(0, 0, 255)",
-          borderColor: "rgb(0, 0, 255)",
-          tension: 0.2,
-          pointRadius: 3,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      animation: false,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: totalMemGB,
-          title: {
-            display: true,
-            text: "Memory (GB)",
-          },
-          ticks: {
-            stepSize: 1,
-            callback: (value) => value.toFixed(0) + " GB",
-            font: { size: 16 },
-          },
-        },
-        x: {
-          title: {
-            display: true,
-          },
-        },
-      },
-    },
-  });
-
-  // Fetch memory info from your server
-
-  // Update chart every second
-  setInterval(() => {
-    if (!sysmetric_global) return;
-    let usedGB =
-      sysinfo_global.mem_total / 1024 / 1024 -
-      sysmetric_global.mem_used / 1024 / 1024;
-    if (usedGB === null) return;
-
-    const timestamp = new Date().toLocaleTimeString();
-
-    memChart.data.labels.push(timestamp);
-    memChart.data.datasets[0].data.push(usedGB);
-
-    if (memChart.data.labels.length > 10) {
-      memChart.data.labels.shift();
-      memChart.data.datasets[0].data.shift();
-    }
-    memChart.update();
-  }, 2000);
-}
-
-async function cpu() {
-  const ctx = document.getElementById("cpu");
-
-  const cpuChart = new Chart(ctx, {
-    type: "line",
-    data: {
-      labels: Array(10).fill(""),
-      datasets: [
-        {
-          label: "CPU Used",
-          data: Array(10).fill(0),
-          backgroundColor: "rgb(0, 0, 255)",
-          borderColor: "rgb(0, 0, 255)",
-          tension: 0.2,
-          pointRadius: 3,
-        },
-      ],
-    },
-    options: {
-      responsive: true,
-      animation: false,
-      maintainAspectRatio: false,
-      scales: {
-        y: {
-          beginAtZero: true,
-          max: 100,
-          ticks: {
-            stepSize: 1,
-            callback: (value) => value.toFixed(0) + " %",
-            font: { size: 16 },
-          },
-        },
-        x: {
-          title: {
-            display: true,
-          },
-        },
-      },
-    },
-  });
-
-  // Updates the cpu chart every 2 seconds
-  setInterval(async () => {
-    if (!sysmetric_global) return;
-    const cpuload = sysmetric_global.cpu_usage;
-    if (cpuload === null) return;
-
-    const timestamp = new Date().toLocaleTimeString();
-
-    cpuChart.data.labels.push(timestamp);
-    cpuChart.data.datasets[0].data.push(cpuload);
-
-    if (cpuChart.data.labels.length > 10) {
-      cpuChart.data.labels.shift();
-      cpuChart.data.datasets[0].data.shift();
-    }
-    cpuChart.update();
-  }, 2000);
-}
-
 async function init() {
   fetchInfo();
 }
 init();
+function updateStats() {
+  const CPUSTAT = document.getElementById("cpu-stat");
+  const MEMSTAT = document.getElementById("mem-stat");
+  const DISKSTAT = document.getElementById("disk-stat");
+
+  if (CPUSTAT && sysmetric_global)
+    CPUSTAT.textContent = sysmetric_global.cpu_usage;
+  if (MEMSTAT && sysinfo_global && sysmetric_global) {
+    const memUsedGB =
+      sysinfo_global.mem_total / 1024 / 1024 -
+      sysmetric_global.mem_free / 1024 / 1024;
+    MEMSTAT.textContent = memUsedGB.toFixed(1);
+  }
+  if (DISKSTAT && sysinfo_global && sysmetric_global) {
+    const diskFreeGB =
+      sysinfo_global.disk_total / 1024 / 1024 -
+      sysmetric_global.disk_used / 1024 / 1024;
+    DISKSTAT.textContent = diskFreeGB.toFixed(1);
+  }
+}
