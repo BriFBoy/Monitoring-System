@@ -1,4 +1,5 @@
 #include "../include/system.h"
+#include "../include/cpu.h"
 #include "../include/mem.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,12 +28,19 @@ struct SystemMetric *getSystemMetric() {
   statvfs("/", &disk_info);
   sysinfo(&mem_info);
 
-  struct SystemMetric *info = malloc(sizeof(struct SystemMetric));
-  if (!info) {
+  struct SystemMetric *metric = malloc(sizeof(struct SystemMetric));
+  if (!metric) {
     perror("Failed to malloc memory");
     return NULL;
   }
-  info->mem_used = getMemAvailable();
-  info->disk_used = disk_info.f_bavail * disk_info.f_bsize;
-  return info;
+  metric->mem_used = getMemAvailable();
+  metric->disk_used = disk_info.f_bavail * disk_info.f_bsize;
+  metric->cpu = getCpuUsage();
+
+  // sets the cpu usage to 0 if error ocurrs when calcing the usage
+  if (metric->cpu == -1) {
+    metric->cpu = 0;
+  }
+
+  return metric;
 }

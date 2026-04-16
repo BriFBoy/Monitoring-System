@@ -10,11 +10,11 @@ unsigned long get_mem_total() {
   unsigned long value;
   char unit[32];
 
-  while (fscanf(f, "%63s %lu %31s", key, &value, unit) == 3) {
-    if (strcmp(key, "MemTotal:") == 0) {
-      fclose(f);
-      return value;
-    }
+  fscanf(f, "%63s %lu %31s", key, &value, unit);
+  if (strcmp(key, "MemTotal:") == 0) {
+    fclose(f);
+    printf("TotalMem: %lu", value);
+    return value;
   }
 
   fclose(f);

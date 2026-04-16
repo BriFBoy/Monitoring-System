@@ -3,6 +3,7 @@ use std::sync::Mutex;
 use serde::{Deserialize, Serialize};
 
 pub mod agent;
+pub mod api;
 
 pub struct IpStorage {
     pub storage: Mutex<Vec<IpAddr>>,
