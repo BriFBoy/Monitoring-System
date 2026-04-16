@@ -1,3 +1,5 @@
+import { getIpElement } from "/global/nav.js";
+
 let IPLIST1 = document.getElementById("iplist");
 const CREATEBUTTON = document.getElementById("create");
 const IPELEMENT = document.getElementById("ip");
@@ -42,12 +44,5 @@ CREATEBUTTON.addEventListener("click", async () => {
       ip: IP.ip,
       port: IP.port,
     }),
-  }).then(() => addIpToNav(IP));
+  }).then(() => IPLIST1.appendChild(getIpElement(IP)));
 });
-
-function addIpToNav(ip) {
-  let el = document.createElement("a");
-  el.innerHTML = ip.ip + ":" + ip.port;
-  el.href = "/?ip=" + ip.ip + "&port=" + ip.port;
-  IPLIST1.appendChild(el);
-}

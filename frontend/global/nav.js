@@ -8,7 +8,7 @@ let IPS = fetch(localStorage.getItem("BACKEND") + "/api/getips")
     });
   });
 
-function getIpElement(IP) {
+export function getIpElement(IP) {
   // wrapper for link + delete button
   let wrapper = document.createElement("div");
   wrapper.className = "ip-item";
