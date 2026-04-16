@@ -18,8 +18,9 @@ async fn main() -> std::io::Result<()> {
     let storage = web::Data::new(IpStorage {
         storage: Mutex::new(Vec::new()),
     });
+    let sock = format!("0.0.0.0:{port}");
 
-    println!("Starting server on port {port}");
+    println!("Starting server on {sock}");
 
     HttpServer::new(move || {
         let cors = Cors::default()
@@ -37,7 +38,8 @@ async fn main() -> std::io::Result<()> {
             .service(ping)
     })
     .workers(5)
-    .bind(("0.0.0.0", port))?
+    .bind(sock)
+    .unwrap()
     .run()
     .await
 }
@@ -50,13 +52,13 @@ async fn root() -> impl Responder {
 #[get("/api/sysinfo")]
 async fn sysinfo(query: web::Query<IpAddr>) -> impl Responder {
     let info = get_sys_info(query.0);
-    serde_json::to_string(&info)
+    serde_json::to_string(&info.await)
 }
 
 #[get("/api/sysmetric")]
 async fn sysmetric(query: web::Query<IpAddr>) -> impl Responder {
     let metric = get_sys_metric(query.0);
-    serde_json::to_string(&metric)
+    serde_json::to_string(&metric.await)
 }
 
 #[get("/api/getips")]
@@ -75,5 +77,5 @@ async fn addip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder
 #[get("/api/ping")]
 async fn ping(body: Json<IpAddr>) -> Json<SystemMectrics> {
     let string = get_sys_metric(body.0);
-    Json(string)
+    Json(string.await)
 }

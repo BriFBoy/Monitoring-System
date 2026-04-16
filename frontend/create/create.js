@@ -48,6 +48,6 @@ CREATEBUTTON.addEventListener("click", async () => {
 function addIpToNav(ip) {
   let el = document.createElement("a");
   el.innerHTML = ip.ip + ":" + ip.port;
-  el.href = "/?ip" + ip.ip + "&port=" + ip.port;
+  el.href = "/?ip=" + ip.ip + "&port=" + ip.port;
   IPLIST1.appendChild(el);
 }
