@@ -5,8 +5,8 @@ use actix_web::{
     App, HttpServer,
     web::{self, Data},
 };
-use monitoring_backend_rs::IpStorage;
 use monitoring_backend_rs::api::{add_ip, get_ips, ping, sys_info, sys_metric};
+use monitoring_backend_rs::{IpStorage, api::delete_ip};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -29,7 +29,8 @@ async fn main() -> std::io::Result<()> {
                 .service(sys_metric)
                 .service(get_ips)
                 .service(add_ip)
-                .service(ping),
+                .service(ping)
+                .service(delete_ip),
         )
     })
     .workers(5)

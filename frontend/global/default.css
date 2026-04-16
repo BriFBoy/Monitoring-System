@@ -24,7 +24,6 @@ body {
   background-color: grey;
   display: block;
 }
-
 .titleLayout {
   min-height: 10%;
   display: flex;
@@ -32,8 +31,34 @@ body {
   align-items: center;
 }
 
-.titleLayout>a {
+.titleLayout > a {
   text-decoration: none;
+}
+
+.ip-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  background-color: grey;
+  margin: 5px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  gap: 5px;
+}
+
+.ip-item a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  font-size: medium;
+}
+
+.delete-button {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  font-size: 14px;
 }
 
 #options {
@@ -46,6 +71,6 @@ body {
   padding-right: 5%;
 }
 
-#options>a {
+#options > a {
   text-decoration: none;
 }

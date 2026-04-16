@@ -40,7 +40,11 @@ pub async fn ping(_body: Json<IpAddr>) -> impl Responder {
     "Ping the agent"
 }
 
-#[delete("/ping")]
-pub async fn delete_ip(_body: Json<IpAddr>) -> impl Responder {
-    "todo"
+#[delete("/deleteip")]
+pub async fn delete_ip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder {
+    let mut storage = data.storage.lock().unwrap();
+    if let Some(index) = storage.iter().position(|i| i.ip == body.ip) {
+        storage.remove(index);
+    }
+    HttpResponse::Ok().status(StatusCode::OK).body("Added Ip")
 }
