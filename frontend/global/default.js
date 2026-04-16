@@ -1,1 +1,4 @@
-localStorage.setItem("BACKEND", "http://172.16.1.55:8081");
+// Gets the BACKEND IP from the url
+// This means the BACKEND must be on the same server as the frontend
+let host = window.location.hostname;
+localStorage.setItem("BACKEND", `http://${host}:8081`);
