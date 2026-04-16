@@ -1,11 +1,12 @@
 use std::sync::Mutex;
 
 use actix_cors::Cors;
-use actix_web::{App, HttpServer, web::Data};
-use monitoring_backend_rs::{
-    IpStorage,
-    api::{addip, getips, ping, root, sysinfo, sysmetric},
+use actix_web::{
+    App, HttpServer,
+    web::{self, Data},
 };
+use monitoring_backend_rs::IpStorage;
+use monitoring_backend_rs::api::{add_ip, get_ips, ping, sys_info, sys_metric};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
@@ -22,15 +23,14 @@ async fn main() -> std::io::Result<()> {
             .allow_any_origin()
             .allow_any_method()
             .allow_any_header();
-        App::new()
-            .wrap(cors)
-            .app_data(storage.clone())
-            .service(root)
-            .service(sysinfo)
-            .service(sysmetric)
-            .service(getips)
-            .service(addip)
-            .service(ping)
+        App::new().wrap(cors).app_data(storage.clone()).service(
+            web::scope("/api")
+                .service(sys_info)
+                .service(sys_metric)
+                .service(get_ips)
+                .service(add_ip)
+                .service(ping),
+        )
     })
     .workers(5)
     .bind(sock)

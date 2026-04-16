@@ -1,47 +1,46 @@
 use actix_web::{
-    HttpResponse, Responder, get,
+    HttpResponse, Responder, delete, get,
     http::StatusCode,
     post,
     web::{self, Json},
 };
 
 use crate::{
-    IpAddr, IpStorage, SystemMectrics,
+    IpAddr, IpStorage, SystemInfo, SystemMectrics,
     agent::{get_sys_info, get_sys_metric},
 };
 
-#[get("/")]
-pub async fn root() -> impl Responder {
-    "Hello World"
-}
-
-#[get("/api/sysinfo")]
-pub async fn sysinfo(query: web::Query<IpAddr>) -> impl Responder {
+#[get("/sysinfo")]
+pub async fn sys_info(query: web::Query<IpAddr>) -> impl Responder {
     let info = get_sys_info(query.0);
-    serde_json::to_string(&info.await)
+    serde_json::to_string(&info.await.unwrap_or(SystemInfo::new(0, 0)))
 }
 
-#[get("/api/sysmetric")]
-pub async fn sysmetric(query: web::Query<IpAddr>) -> impl Responder {
+#[get("/sysmetric")]
+pub async fn sys_metric(query: web::Query<IpAddr>) -> impl Responder {
     let metric = get_sys_metric(query.0);
-    serde_json::to_string(&metric.await)
+    serde_json::to_string(&metric.await.unwrap_or(SystemMectrics::new(0, 0, 0)))
 }
 
-#[get("/api/getips")]
-pub async fn getips(data: web::Data<IpStorage>) -> impl Responder {
+#[get("/getips")]
+pub async fn get_ips(data: web::Data<IpStorage>) -> impl Responder {
     let guard = data.storage.lock().unwrap();
     serde_json::to_string(&*guard).unwrap()
 }
 
-#[post("/api/addip")]
-pub async fn addip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder {
+#[post("/addip")]
+pub async fn add_ip(body: Json<IpAddr>, data: web::Data<IpStorage>) -> impl Responder {
     let mut storage = data.storage.lock().unwrap();
     storage.push(body.0);
     HttpResponse::Ok().status(StatusCode::OK).body("Added Ip")
 }
 
-#[get("/api/ping")]
-pub async fn ping(body: Json<IpAddr>) -> Json<SystemMectrics> {
-    let string = get_sys_metric(body.0);
-    Json(string.await)
+#[get("/ping")]
+pub async fn ping(_body: Json<IpAddr>) -> impl Responder {
+    "Ping the agent"
+}
+
+#[delete("/ping")]
+pub async fn delete_ip(_body: Json<IpAddr>) -> impl Responder {
+    "todo"
 }
