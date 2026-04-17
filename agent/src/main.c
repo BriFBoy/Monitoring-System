@@ -88,8 +88,8 @@ int main(int argc, char *argv[]) {
     if (metric->type == INFO) {
       struct SystemInfo *info = getSystemInfo();
 
-      snprintf(response, sizeof(response), "mem=%lu;disk=%lu;", info->mem_total,
-               info->disk_total);
+      snprintf(response, sizeof(response), "mem=%lu;disk=%lu;hostname=%s;",
+               info->mem_total, info->disk_total, info->hostname);
       response[255] = '\0';
 
       sendto(socket_fd, response, strlen(response), 0,
@@ -97,8 +97,9 @@ int main(int argc, char *argv[]) {
     } else if (metric->type == METRIC) {
       struct SystemMetric *metric = getSystemMetric();
 
-      snprintf(response, sizeof(response), "mem=%lu;disk=%lu;cpu=%d;",
-               metric->mem_used, metric->disk_used, metric->cpu);
+      snprintf(response, sizeof(response),
+               "mem=%lu;disk=%lu;cpu=%d;uptime=%.0f;", metric->mem_used,
+               metric->disk_used, metric->cpu, metric->uptime);
       response[255] = '\0';
 
       sendto(socket_fd, response, strlen(response), 0,

@@ -4,11 +4,13 @@
 struct SystemInfo {
   unsigned long mem_total;
   unsigned long disk_total;
+  char *hostname;
 };
 struct SystemMetric {
   unsigned long mem_used;
   unsigned long disk_used;
   int cpu;
+  float uptime;
 };
 
 struct SystemInfo *getSystemInfo();
