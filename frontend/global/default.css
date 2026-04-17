@@ -2,6 +2,9 @@
   margin: 0;
   padding: 0;
 }
+nav > a {
+  text-decoration: none;
+}
 
 body {
   display: grid;
@@ -24,7 +27,6 @@ body {
   background-color: grey;
   display: block;
 }
-
 .titleLayout {
   min-height: 10%;
   display: flex;
@@ -32,8 +34,40 @@ body {
   align-items: center;
 }
 
-.titleLayout>a {
+.titleLayout > a {
   text-decoration: none;
+}
+
+.ip-item {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  background-color: grey;
+  margin: 5px;
+  border-radius: 20px;
+}
+
+.ip-item a {
+  color: white;
+  text-decoration: none;
+  transition: background-color 0.2s ease;
+  font-size: larger;
+}
+
+.delete-button {
+  background-color: #e74c3c;
+  color: white;
+  padding: 2px;
+  cursor: pointer;
+  border: none;
+  border-radius: 20px;
+  padding: 2px;
+  font-size: small;
+}
+
+.delete-button:hover {
+  background-color: #c0392b;
 }
 
 #options {
@@ -46,6 +80,6 @@ body {
   padding-right: 5%;
 }
 
-#options>a {
+#options > a {
   text-decoration: none;
 }
