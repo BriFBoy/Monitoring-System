@@ -22,6 +22,12 @@ struct SystemInfo *getSystemInfo() {
   info->mem_total = get_mem_total();
   info->disk_total = disk_info.f_blocks * disk_info.f_bsize;
 
+  info->distro = distro();
+  if (info->distro == NULL) {
+    info->distro = malloc(25);
+    strncpy(info->distro, "None", 25);
+  }
+
   info->hostname = hostname();
   if (info->hostname == NULL) {
     info->hostname = malloc(25);

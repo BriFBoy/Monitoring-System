@@ -5,6 +5,7 @@ struct SystemInfo {
   unsigned long mem_total;
   unsigned long disk_total;
   char *hostname;
+  char *distro;
 };
 struct SystemMetric {
   unsigned long mem_used;
