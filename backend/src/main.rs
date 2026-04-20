@@ -1,20 +1,34 @@
-use std::sync::Mutex;
+use std::process;
 
 use actix_cors::Cors;
 use actix_web::{
     App, HttpServer,
     web::{self, Data},
 };
+use monitoring_backend_rs::api::delete_ip;
 use monitoring_backend_rs::api::{add_ip, get_ips, ping, sys_info, sys_metric};
-use monitoring_backend_rs::{IpStorage, api::delete_ip};
+use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
+
+struct AppData {
+    db: Pool<Postgres>,
+}
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     let port: u16 = 8081;
-    let storage = Data::new(IpStorage {
-        storage: Mutex::new(Vec::new()),
-    });
     let sock = format!("0.0.0.0:{port}");
+    let database_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| {
+        println!("No DATABASE_URL enviroment var set. Shuting down");
+        process::exit(1);
+    });
+    let pool = PgPoolOptions::new()
+        .max_connections(5)
+        .connect(&database_url)
+        .await
+        .unwrap_or_else(|_| {
+            println!("Error getting connection. Shuting down");
+            process::exit(1);
+        });
 
     println!("Starting server on {sock}");
 
@@ -23,15 +37,18 @@ async fn main() -> std::io::Result<()> {
             .allow_any_origin()
             .allow_any_method()
             .allow_any_header();
-        App::new().wrap(cors).app_data(storage.clone()).service(
-            web::scope("/api")
-                .service(sys_info)
-                .service(sys_metric)
-                .service(get_ips)
-                .service(add_ip)
-                .service(ping)
-                .service(delete_ip),
-        )
+        App::new()
+            .wrap(cors)
+            .app_data(Data::new(AppData { db: pool.clone() }))
+            .service(
+                web::scope("/api")
+                    .service(sys_info)
+                    .service(sys_metric)
+                    .service(get_ips)
+                    .service(add_ip)
+                    .service(ping)
+                    .service(delete_ip),
+            )
     })
     .workers(5)
     .bind(sock)

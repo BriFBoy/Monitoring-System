@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 
 pub mod agent;
 pub mod api;
+pub mod database;
 
 pub struct IpStorage {
     pub storage: Mutex<Vec<IpAddr>>,
