@@ -30,6 +30,8 @@ async function fetchInfo() {
   sysinfo_global = {
     mem_total: json.mem_total,
     disk_total: json.disk_total,
+    hostname: json.hostname,
+    distro: json.distro,
   };
   const sysmetric = await fetchData();
   sysmetric_global = sysmetric;
@@ -50,6 +52,7 @@ setInterval(async () => {
   sysmetric_global = sysmetric;
   updateStats();
 }, 2000);
+
 async function fetchData() {
   if (!ip || !ip.ip || !ip.port) return null;
   try {
@@ -79,10 +82,13 @@ async function init() {
   fetchInfo();
 }
 init();
+
 function updateStats() {
   const CPUSTAT = document.getElementById("cpu-stat");
   const MEMSTAT = document.getElementById("mem-stat");
   const DISKSTAT = document.getElementById("disk-stat");
+  const HOSTNAME = document.getElementById("hostname");
+  const DISTRO = document.getElementById("distro");
 
   if (CPUSTAT && sysmetric_global)
     CPUSTAT.textContent = sysmetric_global.cpu_usage;
@@ -98,4 +104,7 @@ function updateStats() {
       sysmetric_global.disk_used / 1024 / 1024;
     DISKSTAT.textContent = diskFreeGB.toFixed(1);
   }
+  if (HOSTNAME && sysinfo_global)
+    HOSTNAME.textContent = sysinfo_global.hostname;
+  if (DISTRO && sysinfo_global) DISTRO.textContent = sysinfo_global.distro;
 }

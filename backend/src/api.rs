@@ -14,7 +14,12 @@ use crate::{
 #[get("/sysinfo")]
 pub async fn sys_info(query: web::Query<IPaddr>) -> impl Responder {
     let info = get_sys_info(query.0);
-    serde_json::to_string(&info.await.unwrap_or(SystemInfo::new(0, 0)))
+    serde_json::to_string(&info.await.unwrap_or(SystemInfo::new(
+        0,
+        0,
+        String::new(),
+        String::new(),
+    )))
 }
 
 #[get("/sysmetric")]
