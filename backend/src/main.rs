@@ -30,7 +30,7 @@ async fn main() -> std::io::Result<()> {
             process::exit(1);
         });
 
-    sqlx::migrate!("./migrate")
+    sqlx::migrate!("./migrations")
         .run(&pool)
         .await
         .expect("Failed to run migration");
