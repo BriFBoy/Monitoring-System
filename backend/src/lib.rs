@@ -1,24 +1,12 @@
-use std::sync::Mutex;
-
 use serde::{Deserialize, Serialize};
+use sqlx::{Pool, Postgres};
 
 pub mod agent;
 pub mod api;
 pub mod database;
 
-pub struct IpStorage {
-    pub storage: Mutex<Vec<IpAddr>>,
-}
-#[derive(Deserialize, Serialize)]
-pub struct IpAddr {
-    pub ip: String,
-    pub port: u16,
-}
-
-impl IpAddr {
-    pub fn new(ip: String, port: u16) -> IpAddr {
-        IpAddr { ip, port }
-    }
+pub struct AppData {
+    pub db: Pool<Postgres>,
 }
 
 #[derive(Deserialize, Serialize)]

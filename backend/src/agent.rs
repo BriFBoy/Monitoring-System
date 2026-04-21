@@ -2,9 +2,10 @@ use std::{error::Error, net::UdpSocket};
 
 use actix_web::web::block;
 
-use crate::{IpAddr, SystemInfo, SystemMectrics};
+use crate::database::IPaddr;
+use crate::{SystemInfo, SystemMectrics};
 
-pub async fn get_sys_info(ip: IpAddr) -> Result<SystemInfo, Box<dyn Error + Send + Sync>> {
+pub async fn get_sys_info(ip: IPaddr) -> Result<SystemInfo, Box<dyn Error + Send + Sync>> {
     block(move || {
         let udp_socket = UdpSocket::bind("0.0.0.0:0")?;
 
@@ -18,7 +19,7 @@ pub async fn get_sys_info(ip: IpAddr) -> Result<SystemInfo, Box<dyn Error + Send
     .await?
 }
 
-pub async fn get_sys_metric(ip: IpAddr) -> Result<SystemMectrics, Box<dyn Error + Send + Sync>> {
+pub async fn get_sys_metric(ip: IPaddr) -> Result<SystemMectrics, Box<dyn Error + Send + Sync>> {
     actix_web::web::block(move || {
         let udp_socket = UdpSocket::bind("0.0.0.0:0")?;
 

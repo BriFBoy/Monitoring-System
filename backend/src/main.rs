@@ -5,22 +5,22 @@ use actix_web::{
     App, HttpServer,
     web::{self, Data},
 };
+use dotenv::dotenv;
+use monitoring_backend_rs::AppData;
 use monitoring_backend_rs::api::delete_ip;
 use monitoring_backend_rs::api::{add_ip, get_ips, ping, sys_info, sys_metric};
-use sqlx::{Pool, Postgres, postgres::PgPoolOptions};
-
-struct AppData {
-    db: Pool<Postgres>,
-}
+use sqlx::postgres::PgPoolOptions;
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
+    dotenv().ok();
     let port: u16 = 8081;
     let sock = format!("0.0.0.0:{port}");
     let database_url = std::env::var("DATABASE_URL").unwrap_or_else(|_| {
         println!("No DATABASE_URL enviroment var set. Shuting down");
         process::exit(1);
     });
+
     let pool = PgPoolOptions::new()
         .max_connections(5)
         .connect(&database_url)
@@ -30,8 +30,12 @@ async fn main() -> std::io::Result<()> {
             process::exit(1);
         });
 
-    println!("Starting server on {sock}");
+    sqlx::migrate!("./migrate")
+        .run(&pool)
+        .await
+        .expect("Failed to run migration");
 
+    println!("Starting server on {sock}");
     HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
