@@ -1,3 +1,4 @@
+use std::time::Duration;
 use std::{error::Error, net::UdpSocket};
 
 use actix_web::web::block;
@@ -8,6 +9,7 @@ use crate::{SystemInfo, SystemMectrics};
 pub async fn get_sys_info(ip: IPaddr) -> Result<SystemInfo, Box<dyn Error + Send + Sync>> {
     block(move || {
         let udp_socket = UdpSocket::bind("0.0.0.0:0")?;
+        udp_socket.set_read_timeout(Some(Duration::from_secs(1)))?;
 
         udp_socket.send_to("type=info;".as_bytes(), format!("{}:{}", ip.ip, ip.port))?;
 
@@ -22,6 +24,7 @@ pub async fn get_sys_info(ip: IPaddr) -> Result<SystemInfo, Box<dyn Error + Send
 pub async fn get_sys_metric(ip: IPaddr) -> Result<SystemMectrics, Box<dyn Error + Send + Sync>> {
     actix_web::web::block(move || {
         let udp_socket = UdpSocket::bind("0.0.0.0:0")?;
+        udp_socket.set_read_timeout(Some(Duration::from_secs(1)))?;
 
         udp_socket.send_to("type=metric;".as_bytes(), format!("{}:{}", ip.ip, ip.port))?;
 
