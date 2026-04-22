@@ -1,8 +1,8 @@
 import mem from "/mem.js";
 import cpu from "/cpu.js";
+import { setSysmetric, setSysinfo, notify } from "./global/state.js";
+import { getSysinfo, getSysmetric } from "./global/state.js";
 
-export let sysmetric_global;
-export let sysinfo_global;
 let ip;
 let initialized = false;
 async function fetchInfo() {
@@ -27,16 +27,12 @@ async function fetchInfo() {
   )
     .then((res) => res.json())
     .then((json) => json);
-  sysinfo_global = {
+  setSysinfo({
     mem_total: json.mem_total,
     disk_total: json.disk_total,
     hostname: json.hostname,
     distro: json.distro,
-  };
-  const sysmetric = await fetchData();
-  sysmetric_global = sysmetric;
-  console.debug(sysinfo_global);
-  updateStats();
+  });
 
   if (!initialized) {
     initialized = true;
@@ -49,7 +45,7 @@ setInterval(async () => {
   if (!ip || !ip.ip || !ip.port) return;
   const sysmetric = await fetchData();
   if (sysmetric === null) return;
-  sysmetric_global = sysmetric;
+  setSysmetric(sysmetric);
   updateStats();
 }, 2000);
 
@@ -90,21 +86,20 @@ function updateStats() {
   const HOSTNAME = document.getElementById("hostname");
   const DISTRO = document.getElementById("distro");
 
-  if (CPUSTAT && sysmetric_global)
-    CPUSTAT.textContent = sysmetric_global.cpu_usage;
-  if (MEMSTAT && sysinfo_global && sysmetric_global) {
+  let sysmetric = getSysmetric();
+  let sysinfo = getSysinfo();
+
+  if (CPUSTAT && sysmetric) CPUSTAT.textContent = sysmetric.cpu_usage;
+  if (MEMSTAT && sysinfo && sysmetric) {
     const memUsedGB =
-      sysinfo_global.mem_total / 1024 / 1024 -
-      sysmetric_global.mem_free / 1024 / 1024;
+      sysinfo.mem_total / 1024 / 1024 - sysmetric.mem_free / 1024 / 1024;
     MEMSTAT.textContent = memUsedGB.toFixed(1);
   }
-  if (DISKSTAT && sysinfo_global && sysmetric_global) {
+  if (DISKSTAT && sysinfo && sysmetric) {
     const diskFreeGB =
-      sysinfo_global.disk_total / 1024 / 1024 -
-      sysmetric_global.disk_used / 1024 / 1024;
+      sysinfo.disk_total / 1024 / 1024 - sysmetric.disk_used / 1024 / 1024;
     DISKSTAT.textContent = diskFreeGB.toFixed(1);
   }
-  if (HOSTNAME && sysinfo_global)
-    HOSTNAME.textContent = sysinfo_global.hostname;
-  if (DISTRO && sysinfo_global) DISTRO.textContent = sysinfo_global.distro;
+  if (HOSTNAME && sysinfo) HOSTNAME.textContent = sysinfo.hostname;
+  if (DISTRO && sysinfo) DISTRO.textContent = sysinfo.distro;
 }

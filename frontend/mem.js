@@ -1,10 +1,9 @@
-import { sysinfo_global, sysmetric_global } from "/system.js";
+import { sys_subscribe, getSysinfo } from "/global/state.js";
 
 export default async function mem() {
   const ctx = document.getElementById("mem");
-  console.debug(sysinfo_global);
-  let totalMemGB = sysinfo_global.mem_total / 1024 / 1024;
-  console.debug(totalMemGB);
+  const sysinfo = getSysinfo();
+  let totalMemGB = sysinfo ? sysinfo.mem_total / 1024 / 1024 : 0;
 
   const memChart = new Chart(ctx, {
     type: "line",
@@ -28,7 +27,7 @@ export default async function mem() {
       scales: {
         y: {
           beginAtZero: true,
-          max: totalMemGB,
+          max: totalMemGB || 100,
           title: {
             display: true,
             text: "Memory (GB)",
@@ -48,15 +47,10 @@ export default async function mem() {
     },
   });
 
-  // Fetch memory info from your server
-
-  // Update chart every second
-  setInterval(() => {
-    if (!sysmetric_global) return;
+  sys_subscribe((sysmetric, sysinfo) => {
+    if (!sysmetric || !sysinfo) return;
     let usedGB =
-      sysinfo_global.mem_total / 1024 / 1024 -
-      sysmetric_global.mem_free / 1024 / 1024;
-    if (usedGB === null) return;
+      sysinfo.mem_total / 1024 / 1024 - sysmetric.mem_free / 1024 / 1024;
 
     const timestamp = new Date().toLocaleTimeString();
 
@@ -68,5 +62,6 @@ export default async function mem() {
       memChart.data.datasets[0].data.shift();
     }
     memChart.update();
-  }, 2000);
+  });
 }
+
