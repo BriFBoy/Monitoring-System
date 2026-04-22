@@ -1,0 +1,14 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "DELETE FROM ipaddr WHERE ip = $1",
+  "describe": {
+    "columns": [],
+    "parameters": {
+      "Left": [
+        "Text"
+      ]
+    },
+    "nullable": []
+  },
+  "hash": "4c8f996fec287ce6f698df1a4196d3ec72a5b5a7d32f2ec41f6ab93e2986058f"
+}

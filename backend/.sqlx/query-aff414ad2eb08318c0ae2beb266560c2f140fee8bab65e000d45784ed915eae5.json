@@ -1,0 +1,26 @@
+{
+  "db_name": "PostgreSQL",
+  "query": "SELECT ip, port FROM ipaddr",
+  "describe": {
+    "columns": [
+      {
+        "ordinal": 0,
+        "name": "ip",
+        "type_info": "Varchar"
+      },
+      {
+        "ordinal": 1,
+        "name": "port",
+        "type_info": "Int4"
+      }
+    ],
+    "parameters": {
+      "Left": []
+    },
+    "nullable": [
+      false,
+      false
+    ]
+  },
+  "hash": "aff414ad2eb08318c0ae2beb266560c2f140fee8bab65e000d45784ed915eae5"
+}
