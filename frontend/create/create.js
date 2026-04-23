@@ -35,6 +35,8 @@ CREATEBUTTON.addEventListener("click", async () => {
     localStorage.setItem(IPARRAY_NAME, JSON.stringify(IPs));
   }
 
+  // Stores the IP in the database
+  // Will only it to the dashboard if the request succeed
   fetch(localStorage.getItem("BACKEND") + "/api/addip", {
     method: "POST",
     headers: {

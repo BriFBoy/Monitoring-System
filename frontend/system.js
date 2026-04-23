@@ -1,10 +1,12 @@
 import mem from "/mem.js";
 import cpu from "/cpu.js";
-import { setSysmetric, setSysinfo, notify } from "./global/state.js";
+import { setSysmetric, setSysinfo } from "./global/state.js";
 import { getSysinfo, getSysmetric } from "./global/state.js";
 
 let ip;
 let initialized = false;
+
+// fetches the sysinfo so before the charts load
 async function fetchInfo() {
   let params = new URLSearchParams(window.location.search);
   ip = {
@@ -74,11 +76,6 @@ async function fetchData() {
   }
 }
 
-async function init() {
-  fetchInfo();
-}
-init();
-
 function updateStats() {
   const CPUSTAT = document.getElementById("cpu-stat");
   const MEMSTAT = document.getElementById("mem-stat");
@@ -103,3 +100,4 @@ function updateStats() {
   if (HOSTNAME && sysinfo) HOSTNAME.textContent = sysinfo.hostname;
   if (DISTRO && sysinfo) DISTRO.textContent = sysinfo.distro;
 }
+fetchInfo();

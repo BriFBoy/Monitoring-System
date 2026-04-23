@@ -1,5 +1,6 @@
 import { sys_subscribe } from "/global/state.js";
 
+// Creates the Cpu chart and fills it with info
 export default async function cpu() {
   const ctx = document.getElementById("cpu");
 
@@ -41,6 +42,8 @@ export default async function cpu() {
     },
   });
 
+  // subscribes to the sysmetric/sysinfo event
+  // Updates the chart when getting new info
   sys_subscribe((sysmetric) => {
     if (!sysmetric) return;
     const cpuload = sysmetric.cpu_usage;
@@ -58,4 +61,3 @@ export default async function cpu() {
     cpuChart.update();
   });
 }
-
