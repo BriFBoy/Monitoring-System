@@ -4,7 +4,8 @@ use std::{error::Error, net::UdpSocket};
 use actix_web::web::block;
 
 use crate::database::IPaddr;
-use crate::{SystemInfo, SystemMectrics};
+use crate::systeminfo::SystemInfo;
+use crate::systemmetrics::SystemMectrics;
 
 pub async fn get_sys_info(ip: IPaddr) -> Result<SystemInfo, Box<dyn Error + Send + Sync>> {
     block(move || {

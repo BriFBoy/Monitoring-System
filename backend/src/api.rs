@@ -5,8 +5,10 @@ use actix_web::{
     web::{self, Json},
 };
 
+use crate::systeminfo::SystemInfo;
+use crate::systemmetrics::SystemMectrics;
 use crate::{
-    AppData, SystemInfo, SystemMectrics,
+    AppData,
     agent::{get_sys_info, get_sys_metric},
     database::IPaddr,
 };
