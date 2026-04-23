@@ -20,12 +20,14 @@ impl IPaddr {
             .fetch_one(db)
             .await
     }
+
     pub async fn get_all_ips(db: &Pool<Postgres>) -> Vec<IPaddr> {
         sqlx::query_as!(IPaddr, "SELECT ip, port FROM ipaddr")
             .fetch_all(db)
             .await
             .unwrap_or(Vec::new())
     }
+
     pub async fn insert_ipaddr(&self, db: &Pool<Postgres>) -> Result<PgQueryResult, sqlx::Error> {
         sqlx::query!(
             "INSERT INTO ipaddr (ip, port) VALUES ($1, $2)",
@@ -35,6 +37,7 @@ impl IPaddr {
         .execute(db)
         .await
     }
+
     pub async fn delete_ip(&self, db: &Pool<Postgres>) -> Result<PgQueryResult, sqlx::Error> {
         sqlx::query!("DELETE FROM ipaddr WHERE ip = $1", self.ip)
             .execute(db)

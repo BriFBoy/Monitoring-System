@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Deserialize, Serialize)]
+#[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct SystemInfo {
     mem_total: u64,
     disk_total: u64,
@@ -37,5 +37,22 @@ impl SystemInfo {
             }
         });
         SystemInfo::new(mem_total, disk_total, distro, hostname)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_pars_systeminfo() {
+        let agent_responce = "type=response;mem=434;disk=5000;distro=Arch Linux;hostname=Host";
+
+        let res = SystemInfo::from_agent_response(agent_responce);
+
+        assert_eq!(
+            res,
+            SystemInfo::new(434, 5000, "Arch Linux".to_owned(), "Host".to_owned())
+        )
     }
 }
