@@ -7,6 +7,14 @@ use crate::database::IPaddr;
 use crate::systeminfo::SystemInfo;
 use crate::systemmetrics::SystemMectrics;
 
+/// Sends a response to a given agent to get the SystemInfo.
+/// # Errors
+/// - It will want for a maximux of 1 second before givening and error.
+/// - It will error if it is unable to create a new udp Socket.
+/// - It will error if it is unable to send or resceve from the socket.
+/// # Returns
+/// It will return a Result with a UTF8 string of what it receved form the socket.
+/// If the sender does not return a stirng the function will still try to pars it to UTF8
 pub async fn get_sys_info(ip: IPaddr) -> Result<SystemInfo, Box<dyn Error + Send + Sync>> {
     block(move || {
         let udp_socket = UdpSocket::bind("0.0.0.0:0")?;
@@ -22,6 +30,14 @@ pub async fn get_sys_info(ip: IPaddr) -> Result<SystemInfo, Box<dyn Error + Send
     .await?
 }
 
+/// Sends a response to a given agent to get the SystemMectric.
+/// # Errors
+/// - It will want for a maximux of 1 second before givening and error.
+/// - It will error if it is unable to create a new udp Socket.
+/// - It will error if it is unable to send or resceve from the socket.
+/// # Returns
+/// It will return a Result with a UTF8 string of what it receved form the socket.
+/// If the sender does not return a stirng the function will still try to pars it to UTF8
 pub async fn get_sys_metric(ip: IPaddr) -> Result<SystemMectrics, Box<dyn Error + Send + Sync>> {
     actix_web::web::block(move || {
         let udp_socket = UdpSocket::bind("0.0.0.0:0")?;

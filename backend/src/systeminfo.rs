@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+/// Used to store the values from an agent response.
+/// Most commonly use with the from_agent_response method.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct SystemInfo {
     mem_total: u64,
@@ -9,6 +11,17 @@ pub struct SystemInfo {
 }
 
 impl SystemInfo {
+    /// Used to create a new instance of the SystemInfo struct.
+    /// # Common usage
+    /// Most commonly used to create a empty struct or for getting som filler data
+    /// ```
+    /// serde_json::to_string(&info.await.unwrap_or(SystemInfo::new(
+    ///    0,
+    ///    0,
+    ///    String::new(),
+    ///    String::new(),
+    /// )));
+    /// ```
     pub fn new(mem_total: u64, disk_total: u64, distro: String, hostname: String) -> SystemInfo {
         SystemInfo {
             mem_total,
@@ -17,6 +30,14 @@ impl SystemInfo {
             hostname,
         }
     }
+
+    /// Returns a SystemInfo struct from the given string.
+    /// # Example
+    /// ```
+    /// let agent_responce = "type=response;mem=434;disk=5000;distro=Arch Linux;hostname=Host";
+    /// let info = SystemInfo::from_agent_response(agent_responce);
+    /// ```
+    /// This will return a corresponding SystemInfo Struct
     pub fn from_agent_response(raw: &str) -> Self {
         let mut mem_total = 0u64;
         let mut disk_total = 0u64;

@@ -1,5 +1,7 @@
 use serde::{Deserialize, Serialize};
 
+/// Used to store the values from an agent response.
+/// Most commonly use with the from_agent_response method.
 #[derive(Deserialize, Serialize, Debug, PartialEq)]
 pub struct SystemMectrics {
     mem_used: u64,
@@ -7,8 +9,13 @@ pub struct SystemMectrics {
     cpu_usage: u8,
     uptime: u64,
 }
-
 impl SystemMectrics {
+    /// Used to create a new instance of the SystemInfo struct.
+    /// # Common usage
+    /// Most commonly used to create a empty struct or for getting som filler data
+    /// ```
+    /// serde_json::to_string(&metric.await.unwrap_or(SystemMectrics::new(0, 0, 0, 0)));
+    /// ```
     pub fn new(mem_used: u64, disk_used: u64, cpu_usage: u8, uptime: u64) -> SystemMectrics {
         SystemMectrics {
             mem_used,
@@ -17,6 +24,13 @@ impl SystemMectrics {
             uptime,
         }
     }
+    /// Returns a SystemMectrics struct from the given string.
+    /// # Example
+    /// ```
+    /// let agent_responce = "type=response;mem=434;disk=5000;uptime=300";
+    /// let info = SystemMectrics::from_agent_response(agent_responce);
+    /// ```
+    /// This will return a corresponding SystemMectrics struct
     pub fn from_agent_response(raw: &str) -> Self {
         let mut mem_used = 0u64;
         let mut disk_used = 0u64;
