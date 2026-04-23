@@ -15,6 +15,7 @@
 #define PORT 8080
 #define BUFF_SIZE 1024
 
+// Used to print incomming packets
 void printPacket(const int bytes_rec, const char *buff,
                  const char *addr_print) {
   int len = bytes_rec;
@@ -26,6 +27,8 @@ void printPacket(const int bytes_rec, const char *buff,
   printf("\n");
   fflush(stdout);
 }
+
+// the thread used for calculating the cpu usage every second
 void *threadfunc(void *arg) {
 
   while (true) {
@@ -36,6 +39,8 @@ void *threadfunc(void *arg) {
 
   return NULL;
 }
+
+// Creates a new thread
 pthread_t createMetricThread() {
   pthread_t thread;
 
@@ -64,6 +69,8 @@ int main(int argc, char *argv[]) {
   pthread_t thread = createMetricThread();
 
   socklen_t pear_len = sizeof(pear_addr);
+
+  // Loops forever and waits for new requests
   while (true) {
     const int bytes_rec = recvfrom(socket_fd, buff, BUFF_SIZE, 0,
                                    (struct sockaddr *)&pear_addr, &pear_len);
@@ -84,6 +91,7 @@ int main(int argc, char *argv[]) {
     struct MetricRequest *metric = parsMetricRequest(buff, bytes_rec);
     printMetricRequest(metric);
 
+    // Sends the correct response
     char response[256];
     if (metric->type == INFO) {
       struct SystemInfo *info = getSystemInfo();

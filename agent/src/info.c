@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Read the uptime from the virtual file and return it
 long long uptime_in_sec() {
   FILE *uptime = fopen("/proc/uptime", "r");
   if (uptime == NULL) {
@@ -27,6 +28,7 @@ char *hostname() {
   return hostname;
 }
 
+// Reads the distro name from file and retruns a string
 char *distro() {
   FILE *f = fopen("/etc/os-release", "r");
   if (!f) {

@@ -6,6 +6,8 @@ typedef struct {
       guest_nice;
 } CpuStats;
 
+// Global variable used to get the cpu usage.
+// Writing to this variable can/will cause a race condition!
 static float cpu_usage;
 
 void setCpuUsage(float usage) { cpu_usage = usage; }

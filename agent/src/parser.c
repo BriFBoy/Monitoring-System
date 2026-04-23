@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Compairs and setts the corresponding value.
 static void cmpKeys(const char *key, const char *value,
                     struct MetricRequest *metricrequest) {
   if (strcmp(key, "type") == 0) {
@@ -20,6 +21,8 @@ static void cmpKeys(const char *key, const char *value,
   }
 }
 
+// Pars the request my splitting the string in to diffrent parts useing the ;
+// and =.
 struct MetricRequest *parsMetricRequest(const char *raw_request,
                                         const size_t size) {
   struct MetricRequest *metricrequest = malloc(sizeof(struct MetricRequest));
