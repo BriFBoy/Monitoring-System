@@ -1,4 +1,4 @@
-import { sysmetric_global } from "/system.js";
+import { sys_subscribe } from "/global/state.js";
 
 export default async function cpu() {
   const ctx = document.getElementById("cpu");
@@ -41,10 +41,9 @@ export default async function cpu() {
     },
   });
 
-  // Updates the cpu chart every 2 seconds
-  setInterval(async () => {
-    if (!sysmetric_global) return;
-    const cpuload = sysmetric_global.cpu_usage;
+  sys_subscribe((sysmetric) => {
+    if (!sysmetric) return;
+    const cpuload = sysmetric.cpu_usage;
     if (cpuload === null) return;
 
     const timestamp = new Date().toLocaleTimeString();
@@ -57,5 +56,6 @@ export default async function cpu() {
       cpuChart.data.datasets[0].data.shift();
     }
     cpuChart.update();
-  }, 2000);
+  });
 }
+
