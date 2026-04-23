@@ -18,7 +18,7 @@ A monitoring platform that lets you monitor remote machines in real-time.
    cd agent && make
    ```
 
-3. Install [miniweb](https://github.com/BriFBoy/MiniWeb) if not already installed
+3. Install [miniweb](https://github.com/BriFBoy/MiniWeb) and [mprocs](https://github.com/pvolok/mprocs) if not already installed
 
 4. Run all components:
    ```
@@ -37,9 +37,9 @@ The following services will start:
    DATABASE_URL=url_to_postgres_database
    ```
 
-2. Build and start the containers:
+2. Start the containers:
    ```
-   docker-compose up
+   docker compose up
    ```
 
 This starts the frontend and backend containers. The backend connects to your PostgreSQL instance via `DATABASE_URL`.
