@@ -3,6 +3,7 @@ networks:
 
 services:
   frontend:
+    restart: unless-stopped
     build:
       context: ./frontend
       dockerfile: Dockerfile
@@ -14,6 +15,7 @@ services:
       - monitoring-system 
 
   backend:
+    restart: unless-stopped
     build:
       context: ./backend
       dockerfile: Dockerfile
