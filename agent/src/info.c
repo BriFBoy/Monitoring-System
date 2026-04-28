@@ -28,7 +28,8 @@ char *hostname() {
   return hostname;
 }
 
-// Reads the distro name from file and retruns a string
+// Reads the PRETTY_NAME value from /etc/os-release (e.g., "Ubuntu 22.04 LTS")
+// by finding the PRETTY_NAME= line and stripping quotes around the value
 char *distro() {
   FILE *f = fopen("/etc/os-release", "r");
   if (!f) {

@@ -15,7 +15,6 @@
 #define PORT 8080
 #define BUFF_SIZE 1024
 
-// Used to print incomming packets
 void printPacket(const int bytes_rec, const char *buff,
                  const char *addr_print) {
   int len = bytes_rec;
@@ -28,7 +27,8 @@ void printPacket(const int bytes_rec, const char *buff,
   fflush(stdout);
 }
 
-// the thread used for calculating the cpu usage every second
+// Background thread that calculates CPU usage every second by calling
+// calcCpuUsage() and storing the result in a shared global variable
 void *threadfunc(void *arg) {
 
   while (true) {
@@ -40,7 +40,6 @@ void *threadfunc(void *arg) {
   return NULL;
 }
 
-// Creates a new thread
 pthread_t createMetricThread() {
   pthread_t thread;
 
@@ -48,6 +47,9 @@ pthread_t createMetricThread() {
   return thread;
 }
 
+// UDP server that listens for monitoring requests, spawns a background CPU
+// monitoring thread, and responds with system info or metrics in a formatted
+// key=value string
 int main(int argc, char *argv[]) {
 
   struct sockaddr_in addr = {
