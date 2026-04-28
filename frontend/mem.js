@@ -1,6 +1,5 @@
 import { sys_subscribe, getSysinfo } from "/global/state.js";
 
-// Creates the chart and loads it with information
 export default async function mem() {
   const ctx = document.getElementById("mem");
   const sysinfo = getSysinfo();
@@ -48,8 +47,7 @@ export default async function mem() {
     },
   });
 
-  // subscribes to the sysmetric/sysinfo event
-  // Updates the chart when getting new info
+  // Rolling 10-point window, oldest data point removed when new one is added
   sys_subscribe((sysmetric, sysinfo) => {
     if (!sysmetric || !sysinfo) return;
     let usedGB =
@@ -67,3 +65,4 @@ export default async function mem() {
     memChart.update();
   });
 }
+

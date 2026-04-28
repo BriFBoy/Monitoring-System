@@ -1,6 +1,6 @@
 const IPLIST = document.getElementById("iplist");
 
-// Gets all the IPs from the backend and adds them to the dashboard
+// Load monitored IPs from backend and render them
 fetch(localStorage.getItem("BACKEND") + "/api/getips")
   .then((res) => res.json())
   .then((IPS) => {
@@ -9,7 +9,6 @@ fetch(localStorage.getItem("BACKEND") + "/api/getips")
     });
   });
 
-// Creates The element to display the IPs
 export function getIpElement(IP) {
   let wrapper = document.createElement("div");
   wrapper.className = "ip-item";
@@ -24,15 +23,11 @@ export function getIpElement(IP) {
 
   del.onclick = async (e) => {
     e.preventDefault();
-
-    // calls backend to delete the IP form database
     await fetch(localStorage.getItem("BACKEND") + "/api/deleteip", {
       method: "DELETE",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(IP),
     });
-
-    // remove from DOM
     wrapper.remove();
   };
 

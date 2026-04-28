@@ -6,7 +6,8 @@ import { getSysinfo, getSysmetric } from "./global/state.js";
 let ip;
 let initialized = false;
 
-// fetches the sysinfo so before the charts load
+// Retries until IP and port appear in URL params, then fetches system info
+// and initializes charts. Charts are only started on first successful load.
 async function fetchInfo() {
   let params = new URLSearchParams(window.location.search);
   ip = {
@@ -42,7 +43,7 @@ async function fetchInfo() {
     mem();
   }
 }
-// Updates the global variable to the new information
+
 setInterval(async () => {
   if (!ip || !ip.ip || !ip.port) return;
   const sysmetric = await fetchData();
@@ -51,6 +52,7 @@ setInterval(async () => {
   updateStats();
 }, 2000);
 
+// Maps backend field names to frontend convention, mem_used from backend becomes mem_free
 async function fetchData() {
   if (!ip || !ip.ip || !ip.port) return null;
   try {
@@ -101,3 +103,4 @@ function updateStats() {
   if (DISTRO && sysinfo) DISTRO.textContent = sysinfo.distro;
 }
 fetchInfo();
+
