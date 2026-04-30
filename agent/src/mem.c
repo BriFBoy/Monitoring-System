@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
+// Gets the total ram from virtual file and pares it
 unsigned long get_mem_total() {
   FILE *f = fopen("/proc/meminfo", "r");
   if (!f)
@@ -20,6 +21,7 @@ unsigned long get_mem_total() {
   fclose(f);
   return 0;
 }
+// Gets the  available ram from virtual file and pares it
 unsigned long getMemAvailable() {
   FILE *f = fopen("/proc/meminfo", "r");
   if (!f)

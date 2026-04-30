@@ -3,6 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// Helper function that compares a key string and sets the corresponding
+// enum value in the MetricRequest struct
 static void cmpKeys(const char *key, const char *value,
                     struct MetricRequest *metricrequest) {
   if (strcmp(key, "type") == 0) {
@@ -20,6 +22,9 @@ static void cmpKeys(const char *key, const char *value,
   }
 }
 
+// Parses a raw request string in key=value;key=value format into a
+// MetricRequest struct using strtok_r to split on ';' then '='
+// Returns a newly allocated MetricRequest that must be freed by caller
 struct MetricRequest *parsMetricRequest(const char *raw_request,
                                         const size_t size) {
   struct MetricRequest *metricrequest = malloc(sizeof(struct MetricRequest));

@@ -26,6 +26,9 @@ void printPacket(const int bytes_rec, const char *buff,
   printf("\n");
   fflush(stdout);
 }
+
+// Background thread that calculates CPU usage every second by calling
+// calcCpuUsage() and storing the result in a shared global variable
 void *threadfunc(void *arg) {
 
   while (true) {
@@ -36,6 +39,7 @@ void *threadfunc(void *arg) {
 
   return NULL;
 }
+
 pthread_t createMetricThread() {
   pthread_t thread;
 
@@ -43,6 +47,9 @@ pthread_t createMetricThread() {
   return thread;
 }
 
+// UDP server that listens for monitoring requests, spawns a background CPU
+// monitoring thread, and responds with system info or metrics in a formatted
+// key=value string
 int main(int argc, char *argv[]) {
 
   struct sockaddr_in addr = {
@@ -64,6 +71,8 @@ int main(int argc, char *argv[]) {
   pthread_t thread = createMetricThread();
 
   socklen_t pear_len = sizeof(pear_addr);
+
+  // Loops forever and waits for new requests
   while (true) {
     const int bytes_rec = recvfrom(socket_fd, buff, BUFF_SIZE, 0,
                                    (struct sockaddr *)&pear_addr, &pear_len);
@@ -84,6 +93,7 @@ int main(int argc, char *argv[]) {
     struct MetricRequest *metric = parsMetricRequest(buff, bytes_rec);
     printMetricRequest(metric);
 
+    // Sends the correct response
     char response[256];
     if (metric->type == INFO) {
       struct SystemInfo *info = getSystemInfo();

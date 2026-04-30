@@ -1,11 +1,14 @@
 #include "../include/request.h"
 #include <stdio.h>
 
+// Setts the metricrequest to its default values
 void initMetricRequest(struct MetricRequest *metricrequest) {
   metricrequest->amount = AMOUNT_INVALID;
   metricrequest->type = TYPE_INVALID;
 }
 
+// Prints the MetricRequest
+// Used for logging
 void printMetricRequest(const struct MetricRequest *request) {
   printf("MetricRequest:\n");
   switch (request->type) {
@@ -15,7 +18,7 @@ void printMetricRequest(const struct MetricRequest *request) {
   case TYPE_INVALID:
     break;
   case METRIC:
-    printf("\tType: Metric");
+    printf("\tType: Metric\n");
     break;
   }
 

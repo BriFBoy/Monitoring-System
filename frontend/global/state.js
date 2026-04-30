@@ -1,3 +1,6 @@
+// Subscribers register via sys_subscribe(callback) and receive callbacks
+// whenever setSysmetric() is called with new data
+
 let subscribers = [];
 let sysmetric_global;
 let sysinfo_global;
@@ -26,4 +29,3 @@ export function setSysmetric(new_metric) {
 export function setSysinfo(new_info) {
   sysinfo_global = new_info;
 }
-

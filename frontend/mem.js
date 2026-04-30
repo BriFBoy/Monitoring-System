@@ -47,6 +47,7 @@ export default async function mem() {
     },
   });
 
+  // Rolling 10-point window, oldest data point removed when new one is added
   sys_subscribe((sysmetric, sysinfo) => {
     if (!sysmetric || !sysinfo) return;
     let usedGB =

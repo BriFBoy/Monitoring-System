@@ -41,6 +41,7 @@ export default async function cpu() {
     },
   });
 
+  // Rolling 10-point window, oldest data point removed when new one is added
   sys_subscribe((sysmetric) => {
     if (!sysmetric) return;
     const cpuload = sysmetric.cpu_usage;

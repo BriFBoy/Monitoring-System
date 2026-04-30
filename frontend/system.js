@@ -1,10 +1,13 @@
 import mem from "/mem.js";
 import cpu from "/cpu.js";
-import { setSysmetric, setSysinfo, notify } from "./global/state.js";
+import { setSysmetric, setSysinfo } from "./global/state.js";
 import { getSysinfo, getSysmetric } from "./global/state.js";
 
 let ip;
 let initialized = false;
+
+// Retries until IP and port appear in URL params, then fetches system info
+// and initializes charts. Charts are only started on first successful load.
 async function fetchInfo() {
   let params = new URLSearchParams(window.location.search);
   ip = {
@@ -40,7 +43,7 @@ async function fetchInfo() {
     mem();
   }
 }
-// Updates the global variable to the new information
+
 setInterval(async () => {
   if (!ip || !ip.ip || !ip.port) return;
   const sysmetric = await fetchData();
@@ -49,6 +52,7 @@ setInterval(async () => {
   updateStats();
 }, 2000);
 
+// Maps backend field names to frontend convention, mem_used from backend becomes mem_free
 async function fetchData() {
   if (!ip || !ip.ip || !ip.port) return null;
   try {
@@ -74,11 +78,6 @@ async function fetchData() {
   }
 }
 
-async function init() {
-  fetchInfo();
-}
-init();
-
 function updateStats() {
   const CPUSTAT = document.getElementById("cpu-stat");
   const MEMSTAT = document.getElementById("mem-stat");
@@ -103,3 +102,5 @@ function updateStats() {
   if (HOSTNAME && sysinfo) HOSTNAME.textContent = sysinfo.hostname;
   if (DISTRO && sysinfo) DISTRO.textContent = sysinfo.distro;
 }
+fetchInfo();
+

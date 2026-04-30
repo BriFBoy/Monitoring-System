@@ -6,11 +6,17 @@ typedef struct {
       guest_nice;
 } CpuStats;
 
+// Global variable used to get the cpu usage.
+// Writing to this variable can/will cause a race condition!
 static float cpu_usage;
 
 void setCpuUsage(float usage) { cpu_usage = usage; }
 float getCpuUsage() { return cpu_usage; }
 
+// Calculates CPU usage by reading /proc/stat twice with a 1-second delay,
+// then computing the delta in idle time versus total time.
+// Returns a float from 0-100 representing percentage CPU usage, or -1 on error.
+// Note: This function itself introduces a 1-second blocking delay.
 float calcCpuUsage() {
   FILE *fp = fopen("/proc/stat", "r");
   if (!fp)

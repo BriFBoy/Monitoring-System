@@ -5,8 +5,10 @@ use actix_web::{
     web::{self, Json},
 };
 
+use crate::systeminfo::SystemInfo;
+use crate::systemmetrics::SystemMectrics;
 use crate::{
-    AppData, SystemInfo, SystemMectrics,
+    AppData,
     agent::{get_sys_info, get_sys_metric},
     database::IPaddr,
 };
@@ -25,7 +27,7 @@ pub async fn sys_info(query: web::Query<IPaddr>) -> impl Responder {
 #[get("/sysmetric")]
 pub async fn sys_metric(query: web::Query<IPaddr>) -> impl Responder {
     let metric = get_sys_metric(query.0);
-    serde_json::to_string(&metric.await.unwrap_or(SystemMectrics::new(0, 0, 0)))
+    serde_json::to_string(&metric.await.unwrap_or(SystemMectrics::new(0, 0, 0, 0)))
 }
 
 #[get("/getips")]
